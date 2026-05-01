@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocally - App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .app-container {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" style="text-decoration: none;"><div class="logo">Vocally</div></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/#features">Features</a></li>
+        </ul>
+        <a href="/"><button class="nav-btn">Back to Home</button></a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container app-container">
+        
+        <!-- Main Interaction Widget -->
+        <section class="widget-section">
+            <div class="glass-card main-widget">
+                <div class="recorder-container">
+                    <!-- Glowing Recording Button -->
+                    <button id="record-btn" class="record-btn">
+                        <div class="mic-icon"></div>
+                    </button>
+                    <p id="record-status" class="status-text">Click to Record</p>
+                </div>
+
+                <!-- Form Controls -->
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label>Topic</label>
+                        <select>
+                            <option>General Conversation</option>
+                            <option>Customer Support</option>
+                            <option>Interview</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Model Version</label>
+                        <select>
+                            <option>V1.0 (Fast)</option>
+                            <option>V2.0 (Accurate)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Language</label>
+                        <select>
+                            <option>English</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="upload-section">
+                    <p class="or-text">— OR —</p>
+                    <label for="audio-upload" class="upload-btn">
+                        Upload Audio File
+                    </label>
+                    <input type="file" id="audio-upload" accept="audio/*" hidden>
+                    <p id="file-name" class="file-name"></p>
+                </div>
+            </div>
+            
+            <!-- Result Panel (Hidden initially) -->
+            <div id="result-panel" class="glass-card result-panel hidden">
+                <h3>Prediction Results</h3>
+                <div class="emotion-display">
+                    <h2 id="predicted-emotion" class="main-emotion">---</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <!-- Progress Bars for Probabilities -->
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Happy</span> <span id="prob-happy-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-happy" class="bar-fill happy-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Sad</span> <span id="prob-sad-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-sad" class="bar-fill sad-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Angry</span> <span id="prob-angry-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-angry" class="bar-fill angry-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Neutral</span> <span id="prob-neutral-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-neutral" class="bar-fill neutral-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Fear</span> <span id="prob-fear-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-fear" class="bar-fill fear-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Disgust</span> <span id="prob-disgust-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-disgust" class="bar-fill disgust-fill"></div></div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-label"><span>Surprise</span> <span id="prob-ps-val">0%</span></div>
+                        <div class="bar-track"><div id="prob-ps" class="bar-fill ps-fill"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Stats Section matching the image aesthetics -->
+        <section class="visuals-section">
+            <div class="glass-card chart-card">
+                <h4>Sentiment Trend</h4>
+                <div class="fake-chart">
+                    <div class="chart-bar" style="height: 40%;"></div>
+                    <div class="chart-bar" style="height: 70%;"></div>
+                    <div class="chart-bar" style="height: 50%;"></div>
+                    <div class="chart-bar" style="height: 90%;"></div>
+                    <div class="chart-bar highlight-bar" style="height: 100%;"></div>
+                    <div class="chart-bar" style="height: 60%;"></div>
+                </div>
+            </div>
+            <div class="glass-card circular-card">
+                <h4>Accuracy Status</h4>
+                <div class="circle-progress" id="accuracy-circle">
+                    <div class="inner-circle" id="accuracy-val">95%</div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

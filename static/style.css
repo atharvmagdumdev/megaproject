@@ -1,0 +1,444 @@
+/* Premium Dark Theme Variables */
+:root {
+    --bg-color: #050508;
+    --text-main: #fcfcfc;
+    --text-muted: #8b8f9e;
+    --accent-glow: #1f37ff;
+    --accent-glow-secondary: #ff1f5a;
+    --accent-primary: #3c54ff;
+    --card-bg: rgba(20, 22, 30, 0.4);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(24px);
+    
+    /* Emotion Colors */
+    --color-happy: #00e676;
+    --color-sad: #2979ff;
+    --color-angry: #ff1744;
+    --color-neutral: #9e9e9e;
+    --color-fear: #8b5cf6;
+    --color-disgust: #ec4899;
+    --color-ps: #ffb300;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    /* Subtle background gradient */
+    background-image: radial-gradient(circle at 15% 50%, rgba(31, 55, 255, 0.05), transparent 40%),
+                      radial-gradient(circle at 85% 30%, rgba(255, 31, 90, 0.05), transparent 40%);
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, .logo {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* --- Navbar --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 64px;
+    background: transparent;
+    z-index: 100;
+}
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+}
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.nav-links a:hover {
+    color: var(--text-main);
+}
+.nav-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.nav-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* --- Container & Layout --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- Hero Section --- */
+.hero {
+    text-align: left;
+    margin-bottom: 80px;
+    width: 100%;
+}
+.hero-title {
+    font-size: 82px;
+    line-height: 1.1;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+}
+.highlight {
+    background: linear-gradient(90deg, #3c54ff, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 60px rgba(60, 84, 255, 0.4);
+}
+.hero-subtitle {
+    color: var(--text-muted);
+    font-size: 18px;
+    max-width: 500px;
+    font-weight: 400;
+}
+
+/* --- Glassmorphism Cards --- */
+.glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Main Widget --- */
+.widget-section {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.main-widget {
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- Recorder Button UI --- */
+.recorder-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.record-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #1f37ff, #8b5cf6);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 40px rgba(31, 55, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 10;
+}
+.record-btn::before {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    border-radius: 50%;
+    background: rgba(31, 55, 255, 0.2);
+    z-index: -1;
+    animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.record-btn.recording {
+    background: linear-gradient(135deg, #ff1f5a, #ec4899);
+    box-shadow: 0 0 60px rgba(255, 31, 90, 0.6);
+}
+.record-btn.recording::before {
+    background: rgba(255, 31, 90, 0.3);
+    animation: pulse-fast 1s infinite ease-in-out;
+}
+@keyframes pulse-fast {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.mic-icon {
+    width: 24px;
+    height: 36px;
+    border-radius: 12px;
+    background: #fff;
+    position: relative;
+}
+.mic-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 10px;
+    width: 4px;
+    height: 10px;
+    background: #fff;
+    border-radius: 2px;
+}
+.record-btn.recording .mic-icon {
+    border-radius: 4px;
+    height: 24px; /* Converts mic shape to a stop square */
+}
+.record-btn.recording .mic-icon::after {
+    display: none;
+}
+
+.status-text {
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+/* --- Form Controls --- */
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+.control-group label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.control-group select {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--card-border);
+    color: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    outline: none;
+    appearance: none;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border 0.3s;
+}
+.control-group select:focus, .control-group select:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Upload Section --- */
+.upload-section {
+    text-align: center;
+    width: 100%;
+}
+.or-text {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 20px 0;
+}
+.upload-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.upload-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.file-name {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--accent-primary);
+}
+
+/* --- Results Panel --- */
+.result-panel {
+    flex: 1;
+    max-width: 400px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    display: flex;
+    flex-direction: column;
+}
+.result-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+.result-panel h3 {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 16px;
+}
+.emotion-display {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+.main-emotion {
+    font-size: 48px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Probability Bars */
+.stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.prob-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.prob-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 500;
+}
+.bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.happy-fill { background: var(--color-happy); box-shadow: 0 0 10px var(--color-happy); }
+.sad-fill { background: var(--color-sad); box-shadow: 0 0 10px var(--color-sad); }
+.angry-fill { background: var(--color-angry); box-shadow: 0 0 10px var(--color-angry); }
+.neutral-fill { background: var(--color-neutral); box-shadow: 0 0 10px var(--color-neutral); }
+.fear-fill { background: var(--color-fear); box-shadow: 0 0 10px var(--color-fear); }
+.disgust-fill { background: var(--color-disgust); box-shadow: 0 0 10px var(--color-disgust); }
+.ps-fill { background: var(--color-ps); box-shadow: 0 0 10px var(--color-ps); }
+
+/* --- Fancy Visuals matching Image --- */
+.visuals-section {
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    margin-top: 60px;
+}
+.chart-card {
+    flex: 2;
+    height: 200px;
+}
+.circular-card {
+    flex: 1;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+.fake-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    height: 120px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.chart-bar {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px 4px 0 0;
+    transition: height 0.5s ease;
+}
+.chart-bar.highlight-bar {
+    background: var(--color-happy);
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+}
+
+.circle-progress {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(var(--color-happy) 95%, rgba(255,255,255,0.1) 95%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    box-shadow: 0 0 30px rgba(0, 230, 118, 0.2);
+}
+.inner-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocally - About Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .about-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+            margin-top: 80px;
+            margin-bottom: 80px;
+        }
+
+        .about-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            filter: drop-shadow(0 0 40px rgba(31, 55, 255, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .about-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .about-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .about-text h2 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .about-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-muted);
+        }
+
+        .about-text .highlight-text {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .mission-section {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 120px auto;
+            padding: 40px;
+            background: linear-gradient(180deg, transparent, rgba(139, 92, 246, 0.05));
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mission-section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .mission-section p {
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .about-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo"><a href="/" style="color: inherit; text-decoration: none;">Vocally</a></div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/app">Model Demo</a></li>
+        </ul>
+        <a href="/app"><button class="nav-btn">Try Our Model</button></a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- About Section -->
+        <section class="about-section">
+            <div class="about-image">
+                <img src="{{ url_for('static', filename='about_us_illustration.png') }}" alt="Four students working on AI">
+            </div>
+            
+            <div class="about-text">
+                <h2>About Us</h2>
+                <p>
+                    While most technology focuses on the "what" of communication—the actual words being said or typed—we realized that it's often the "how" that contains the true meaning. Emotions shape the way people think, decide, and connect. Yet, in modern digital communication, those critical emotional layers are frequently lost.
+                </p>
+                <p>
+                    Vocally isn't a massive corporate endeavor. It started as a collaborative project meant to explore how Speech Emotion Recognition (SER) models could accurately pick up on subtle vocal behaviors—from pitch and volume to speed and intonation. 
+                </p>
+                <p>
+                    We are <span class="highlight-text">Atharv, Arhant, Indrajeet, and Samarth</span> — four students who set out to build something meaningful that bridges the gap between human emotion and artificial intelligence.
+                </p>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="mission-section">
+            <h2>Our Purpose</h2>
+            <p>
+                We aim to connect human emotions with AI-driven insights, proving that understanding the sentiment behind the voice can lead to more empathetic and communicative technology.
+            </p>
+        </section>
+        
+    </main>
+    
+    <footer class="footer" style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.05); color: #8b8f9e; font-size: 14px;">
+        <p>&copy; 2026 Vocally Web Application. Created by Atharv, Arhant, Indrajeet & Samarth.</p>
+    </footer>
+</body>
+</html>

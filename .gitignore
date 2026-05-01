@@ -1,0 +1,8 @@
+Datasets/
+saved_model/
+__pycache__/
+.ipynb_checkpoints/
+tmp/
+results/
+*.pyc
+.env
