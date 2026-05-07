@@ -32,10 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     audioChunks.push(e.data);
                 };
 
-                mediaRecorder.onstop = () => {
+                mediaRecorder.onstop = async () => {
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    sendAudioToBackend(audioBlob, "recording.webm");
                     audioChunks = []; // reset
+                    
+                    try {
+                        const arrayBuffer = await audioBlob.arrayBuffer();
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                        const wavBlob = audioBufferToWav(audioBuffer);
+                        sendAudioToBackend(wavBlob, "recording.wav");
+                    } catch (err) {
+                        console.error("Audio conversion failed:", err);
+                        sendAudioToBackend(audioBlob, "recording.webm");
+                    }
                 };
 
                 mediaRecorder.start();
@@ -150,3 +160,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+// Utility function to convert AudioBuffer to WAV format
+function audioBufferToWav(buffer) {
+    const numChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const format = 1; // PCM
+    const bitDepth = 16;
+    
+    const result = new Int16Array(buffer.length * numChannels);
+    for (let channel = 0; channel < numChannels; channel++) {
+        const channelData = buffer.getChannelData(channel);
+        let offset = channel;
+        for (let i = 0; i < buffer.length; i++) {
+            let sample = Math.max(-1, Math.min(1, channelData[i]));
+            result[offset] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+            offset += numChannels;
+        }
+    }
+    
+    const dataSize = result.length * 2;
+    const arrayBuffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(arrayBuffer);
+    
+    // RIFF chunk descriptor
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeString(view, 8, 'WAVE');
+    
+    // FMT sub-chunk
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, format, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numChannels * 2, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, bitDepth, true);
+    
+    // Data sub-chunk
+    writeString(view, 36, 'data');
+    view.setUint32(40, dataSize, true);
+    
+    // Write PCM data
+    const offset = 44;
+    for (let i = 0; i < result.length; i++) {
+        view.setInt16(offset + (i * 2), result[i], true);
+    }
+    
+    return new Blob([view], { type: 'audio/wav' });
+}
+
+function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+    }
+}

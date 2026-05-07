@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import os
 import torch
 import librosa
@@ -7,6 +7,14 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
 
 app = Flask(__name__)
 
+# Try importing cv2 and DeepFace. If they fail, they will need to be pip installed.
+try:
+    import cv2
+    from deepface import DeepFace
+except ImportError:
+    print("Please install opencv-python and deepface: pip install opencv-python deepface")
+    cv2 = None
+    DeepFace = None
 # Load the processor (same as in the training notebook)
 print("Loading model and processor, this may take a moment...")
 processor = Wav2Vec2Processor.from_pretrained('facebook/wav2vec2-base')
@@ -42,6 +50,73 @@ def model_app():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/face")
+def face_app():
+    return render_template("face.html")
+
+def generate_frames():
+    # Automatically find the correct camera index (DroidCam might be 1, 2, or 3)
+    camera = None
+    
+    # Check DroidCam local streams (if connected via USB or local client) first, then fallback to physical indices
+    sources_to_try = [
+        'http://127.0.0.1:4747/video',
+        'http://localhost:4747/video',
+        0, 1, 2, 3
+    ]
+    
+    for source in sources_to_try:
+        cap = cv2.VideoCapture(source)
+        if cap.isOpened():
+            success, _ = cap.read()
+            if success:
+                camera = cap
+                print(f"Successfully connected to camera at index {i}")
+                break
+                
+    if camera is None:
+        print("Could not find any active camera.")
+        return
+    
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            try:
+                # DeepFace analyze for emotions
+                # enforce_detection=False so it doesn't crash if no face is in the frame
+                results = DeepFace.analyze(frame, actions=['emotion'], enforce_detection=False)
+                
+                # DeepFace returns a list if multiple faces, or a dict if one
+                faces = results if isinstance(results, list) else [results]
+                
+                for face in faces:
+                    # Get bounding box coordinates
+                    region = face["region"]
+                    x, y, w, h = region['x'], region['y'], region['w'], region['h']
+                    emotion = face["dominant_emotion"].capitalize()
+                    
+                    # Draw a green rectangle around the face
+                    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                    # Write the emotion text above the rectangle
+                    cv2.putText(frame, emotion, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            except Exception as e:
+                pass # If detection fails on a frame, we just stream the raw frame
+                
+            # Convert the modified frame to JPEG
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame_bytes = buffer.tobytes()
+            
+            # Yield the frame in byte format for the web stream
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    # Returns the video stream from the generate_frames() generator
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/predict", methods=["POST"])
 def predict():
