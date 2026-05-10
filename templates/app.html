@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .app-container {
-            margin-top: 40px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -31,9 +31,15 @@
         <section class="widget-section">
             <div class="glass-card main-widget">
                 <div class="recorder-container">
+                    <div class="recorder-glow-backdrop"></div>
                     <!-- Glowing Recording Button -->
                     <button id="record-btn" class="record-btn">
-                        <div class="mic-icon"></div>
+                        <svg class="mic-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="22"></line>
+                        </svg>
+                        <div class="stop-square"></div>
                     </button>
                     <p id="record-status" class="status-text">Click to Record</p>
                 </div>
@@ -75,70 +81,119 @@
                 </div>
             </div>
             
-            <!-- Result Panel (Hidden initially) -->
-            <div id="result-panel" class="glass-card result-panel hidden">
-                <h3>Prediction Results</h3>
-                <div class="emotion-display">
-                    <h2 id="predicted-emotion" class="main-emotion">---</h2>
+        </section>
+
+        <!-- Idle Hero Section (Visible before recording) -->
+        <section class="idle-hero-section" id="idle-hero">
+            <div class="idle-content">
+                <h2 class="idle-title">Understand Human Emotion Through Voice</h2>
+                <p class="idle-subtitle">Vocally uses AI-powered speech emotion recognition to analyze emotional tone in real time.</p>
+                <div class="idle-features">
+                    <div class="feature-badge">🎙 Real-Time Analysis</div>
+                    <div class="feature-badge">🧠 Deep Learning Model</div>
+                    <div class="feature-badge">📊 Emotion Detection</div>
+                    <div class="feature-badge">⚡ Instant Results</div>
                 </div>
                 
-                <div class="stats-grid">
-                    <!-- Progress Bars for Probabilities -->
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Happy</span> <span id="prob-happy-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-happy" class="bar-fill happy-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Sad</span> <span id="prob-sad-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-sad" class="bar-fill sad-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Angry</span> <span id="prob-angry-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-angry" class="bar-fill angry-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Neutral</span> <span id="prob-neutral-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-neutral" class="bar-fill neutral-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Fear</span> <span id="prob-fear-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-fear" class="bar-fill fear-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Disgust</span> <span id="prob-disgust-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-disgust" class="bar-fill disgust-fill"></div></div>
-                    </div>
-                    <div class="prob-bar">
-                        <div class="prob-label"><span>Surprise</span> <span id="prob-ps-val">0%</span></div>
-                        <div class="bar-track"><div id="prob-ps" class="bar-fill ps-fill"></div></div>
-                    </div>
+                <div class="idle-waveform">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
                 </div>
-
             </div>
         </section>
 
-        <!-- Stats Section matching the image aesthetics -->
-        <section class="visuals-section">
-            <div class="glass-card chart-card">
-                <h4>Sentiment Trend</h4>
-                <div class="fake-chart">
-                    <div class="chart-bar" style="height: 40%;"></div>
-                    <div class="chart-bar" style="height: 70%;"></div>
-                    <div class="chart-bar" style="height: 50%;"></div>
-                    <div class="chart-bar" style="height: 90%;"></div>
-                    <div class="chart-bar highlight-bar" style="height: 100%;"></div>
-                    <div class="chart-bar" style="height: 60%;"></div>
+        <!-- Dynamic Results Dashboard -->
+        <section class="dashboard-section hidden" id="dashboard-section">
+            <h2 class="dashboard-title">Audio Analysis Results</h2>
+            
+            <div class="dashboard-top-row">
+                <!-- Card 1: Primary Result / Emotion Meter -->
+                <div class="glass-card dash-card meter-card">
+                    <h3>Vocal Emotion Meter</h3>
+                    
+                    <div class="meter-header">
+                        <div class="primary-emotion-display-inline">
+                            <span class="emotion-icon" id="emotion-icon">😐</span>
+                            <h2 id="predicted-emotion" class="main-emotion">---</h2>
+                        </div>
+                        <div class="confidence-badge" id="accuracy-badge">
+                            <span id="accuracy-val">0%</span> Confidence
+                        </div>
+                    </div>
+
+                    <div class="horizontal-meter-container">
+                        <div class="meter-track"></div>
+                        <div class="meter-labels">
+                            <span class="lbl-happy">Happy</span>
+                            <span class="lbl-surprise">Surprise</span>
+                            <span class="lbl-neutral">Neutral</span>
+                            <span class="lbl-sad">Sad</span>
+                            <span class="lbl-fear">Fear</span>
+                            <span class="lbl-disgust">Disgust</span>
+                            <span class="lbl-angry">Angry</span>
+                        </div>
+                        <div class="meter-pointer" id="meter-pointer">▼</div>
+                        <p id="ai-insight-text-meter" class="meter-insight-text">Awaiting analysis...</p>
+                    </div>
                 </div>
             </div>
-            <div class="glass-card circular-card">
-                <h4>Accuracy Status</h4>
-                <div class="circle-progress" id="accuracy-circle">
-                    <div class="inner-circle" id="accuracy-val">95%</div>
+
+            <div class="dashboard-grid">
+                <!-- Card 2: Spectrum -->
+                <div class="glass-card dash-card spectrum-card">
+                    <h3>Emotion Spectrum</h3>
+                    <div class="stats-grid">
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Happy</span> <span id="prob-happy-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-happy" class="bar-fill happy-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Sad</span> <span id="prob-sad-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-sad" class="bar-fill sad-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Angry</span> <span id="prob-angry-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-angry" class="bar-fill angry-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Neutral</span> <span id="prob-neutral-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-neutral" class="bar-fill neutral-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Fear</span> <span id="prob-fear-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-fear" class="bar-fill fear-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Disgust</span> <span id="prob-disgust-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-disgust" class="bar-fill disgust-fill"></div></div>
+                        </div>
+                        <div class="prob-bar">
+                            <div class="prob-label"><span>Surprise</span> <span id="prob-ps-val">0%</span></div>
+                            <div class="bar-track"><div id="prob-ps" class="bar-fill ps-fill"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: AI Insights -->
+                <div class="glass-card dash-card insight-card">
+                    <h3>Vocal Characteristics</h3>
+                    <p id="ai-insight-text" class="insight-text">Awaiting analysis...</p>
+                    <div class="insight-tags">
+                        <span class="tag" id="tag-energy">Energy: --</span>
+                        <span class="tag" id="tag-tone">Tone: --</span>
+                        <span class="tag" id="tag-pace">Pace: --</span>
+                    </div>
                 </div>
             </div>
         </section>
         
     </main>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
 </body>
 </html>

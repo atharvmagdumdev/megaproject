@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, jsonify, Response
 import os
+
+# Dynamically add the FFmpeg path the user downloaded so it works without them needing to restart terminals or edit Windows PATH variables
+ffmpeg_path = r"C:\Users\HP\Downloads\ffmpeg-8.1.1-essentials_build\bin"
+os.environ["PATH"] += os.pathsep + ffmpeg_path
+
 import torch
 import librosa
 import numpy as np
@@ -7,7 +12,7 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForSequenceClassification
 
 app = Flask(__name__)
 
-# Try importing cv2 and DeepFace. If they fail, they will need to be pip installed.
+
 try:
     import cv2
     from deepface import DeepFace
@@ -15,13 +20,12 @@ except ImportError:
     print("Please install opencv-python and deepface: pip install opencv-python deepface")
     cv2 = None
     DeepFace = None
-# Load the processor (same as in the training notebook)
+
+
 print("Loading model and processor, this may take a moment...")
 processor = Wav2Vec2Processor.from_pretrained('facebook/wav2vec2-base')
 
-# The user is supposed to train and save the model to a path (e.g. ./results/). 
-# For now we will instantiate the base model or try to load a local ./model if it exists.
-# We set num_labels=7 to match angry, disgust, fear, happy, neutral, sad, ps.
+
 MODEL_DIR = './saved_model' # Placeholder for user to update later
 try:
     if os.path.exists(MODEL_DIR):
@@ -34,9 +38,7 @@ except Exception as e:
     print(f"Error loading model: {e}")
     model = None
 
-# Fallback label map (since the unique() order in pandas might differ, 
-# the user will need to supply the exact inverse_label_map generated in their notebook).
-# For now, we use a generic mapping for demonstration based on the 7 emotions.
+
 emotion_labels = ['neutral', 'happy', 'sad', 'angry', 'fear', 'disgust', 'ps']
 
 @app.route("/")
@@ -56,23 +58,18 @@ def face_app():
     return render_template("face.html")
 
 def generate_frames():
-    # Automatically find the correct camera index (DroidCam might be 1, 2, or 3)
     camera = None
     
-    # Check DroidCam local streams (if connected via USB or local client) first, then fallback to physical indices
-    sources_to_try = [
-        'http://127.0.0.1:4747/video',
-        'http://localhost:4747/video',
-        0, 1, 2, 3
-    ]
+    
+    sources_to_try = [0, 1, 2, 3]
     
     for source in sources_to_try:
-        cap = cv2.VideoCapture(source)
+        cap = cv2.VideoCapture(source, cv2.CAP_DSHOW)
         if cap.isOpened():
             success, _ = cap.read()
             if success:
                 camera = cap
-                print(f"Successfully connected to camera at index {i}")
+                print(f"Successfully connected to camera at source {source}")
                 break
                 
     if camera is None:
@@ -85,8 +82,6 @@ def generate_frames():
             break
         else:
             try:
-                # DeepFace analyze for emotions
-                # enforce_detection=False so it doesn't crash if no face is in the frame
                 results = DeepFace.analyze(frame, actions=['emotion'], enforce_detection=False)
                 
                 # DeepFace returns a list if multiple faces, or a dict if one
@@ -182,13 +177,15 @@ def predict():
         }
         
     except Exception as e:
-        print(f"Error during prediction: {e}")
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error during prediction: {error_trace}")
         # Fallback to mock data if inference fails (e.g. ffmpeg not installed, etc.)
         result = {
             "emotion": "Error",
             "confidence": 0.0,
             "probabilities": {"Error": 1.0},
-            "error_msg": str(e)
+            "error_msg": error_trace
         }
     
     return jsonify(result)
